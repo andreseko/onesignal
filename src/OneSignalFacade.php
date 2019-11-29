@@ -1,0 +1,19 @@
+<?php
+
+namespace AndreSeko\OneSignal;
+
+use Illuminate\Support\Facades\Facade;
+
+/**
+ * Class OneSignalFacade
+ * @author Andre Goncalves <andreseko@gmail.com>
+ * @version 1.0.0
+ * @package andreseko\OneSignal
+ */
+class OneSignalFacade extends Facade
+{
+    protected static function getFacadeAccessor()
+    {
+        return 'onesignal';
+    }
+}

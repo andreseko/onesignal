@@ -15,6 +15,33 @@ First, you'll need to require the package with Composer:
 $ composer require andreseko/onesignal
 ```
 
+**You only need to do the following if your Laravel version is below 5.5**:
+
+Then, update `config/app.php` by adding an entry for the service provider.
+
+```php
+'providers' => [
+	// ...
+	andreseko\OneSignal\OneSignalServiceProvider::class
+];
+```
+
+Then, register class alias by adding an entry in aliases section
+
+```php
+'aliases' => [
+	// ...
+	'OneSignal' => Berkayk\OneSignal\OneSignalFacade::class
+];
+```
+
+
+Finally, from the command line again, run 
+
+```
+php artisan vendor:publish --tag=config
+``` 
+
 ## Configuration
 
 In your .env file, create the follow variables:

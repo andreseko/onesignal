@@ -10,20 +10,21 @@
     "symfony/psr-http-message-bridge": "1.*"
   },
   "require-dev": {
-    "vlucas/phpdotenv": "^2.2"
+    "vlucas/phpdotenv": "^2.2",
+    "phpunit/phpunit": "^7.5"
   },
   "autoload": {
     "psr-4": {
-      "andreseko\\OneSignal\\": "src/"
+      "AndreSeko\\OneSignal\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "andreseko\\OneSignal\\OneSignalServiceProvider"
+        "AndreSeko\\OneSignal\\OneSignalServiceProvider"
       ],
       "aliases": {
-        "OneSignal": "andreseko\\OneSignal\\OneSignalFacade"
+        "OneSignal": "AndreSeko\\OneSignal\\OneSignalFacade"
       }
     }
   },
@@ -31,9 +32,19 @@
   "authors": [
     {
       "name": "Andre Goncalves",
-      "email": "andreseko@gmail.com"
+      "email": "andreseko@gmail.com",
+      "role": "Senior Software Engineer"
     }
   ],
   "minimum-stability": "dev",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  }
 }

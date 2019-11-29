@@ -1,7 +1,7 @@
 <?php
 
 
-namespace andreseko\OneSignal;
+namespace AndreSeko\OneSignal;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
