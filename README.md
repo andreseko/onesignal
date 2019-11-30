@@ -4,8 +4,8 @@
 
 This is a simple OneSignal wrapper library for Laravel. It simplifies the basic notification flow with the defined methods. You can send a message to all users or you can notify a single user. Before you start installing this service, please complete your OneSignal setup at https://onesignal.com and finish all the steps that is necessary to obtain an application id and REST API Keys.
 
-[![Latest Stable Version](https://poser.pugx.org/andreseko/onesignal/version)](https://packagist.org/packages/andreseko/onesignal)
-[![Total Downloads](https://poser.pugx.org/andreseko/laravel/downloads)](https://packagist.org/packages/andreseko/laravel)
+[![Latest Stable Version](https://poser.pugx.org/andreseko/onesignal/v/stable)](https://packagist.org/packages/andreseko/onesignal)
+[![Total Downloads](https://poser.pugx.org/andreseko/onesignal/downloads)](https://packagist.org/packages/andreseko/onesignal)
 [![License](https://poser.pugx.org/andreseko/onesignal/license)](https://packagist.org/packages/andreseko/onesignal)
 [![Build Status](https://travis-ci.org/andreseko/onesignal.svg?branch=master)](https://travis-ci.org/andreseko/onesignal)
 
