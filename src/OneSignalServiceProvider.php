@@ -45,14 +45,15 @@ class OneSignalServiceProvider extends ServiceProvider
                 $config = $app['config']['onesignal'] ?: $app['config']['onesignal::config'];
             }
 
-            $client = new OneSignal($config['app_id'], $config['rest_api_key'], $config['user_auth_key']);
-
-            return $client;
+            return new OneSignal($config['app_id'], $config['rest_api_key']);
         });
 
         $this->app->alias('onesignal', 'AndreSeko\OneSignal\OneSignal');
     }
 
+    /**
+     * @return array
+     */
     public function provides()
     {
         return ['onesignal'];

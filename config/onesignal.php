@@ -17,7 +17,6 @@ return array(
 	|
 	*/
     'rest_api_key' => env('ONESIGNAL_REST_API_ID', 'YOUR_REST_API_KEY'),
-    'user_auth_key' => env('ONESIGNAL_AUTH_KEY', 'YOUR_AUTH_USER_KEY'),
     /*
 	|--------------------------------------------------------------------------
 	| General

@@ -4,35 +4,62 @@
 namespace AndreSeko\OneSignal;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request as Psr7Request;
 use GuzzleHttp\Psr7\Response as Psr7Response;
-
-// TODO Adicionar um JSON encode antes de enviar.
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class OneSignal
+ *
  * @author Andre Goncalves <andreseko@gmail.com>
  * @version 1.0.0
  * @package andreseko\OneSignal
+ * @link https://documentation.onesignal.com/reference#create-notification to refer all customizable parameters.
  */
 class OneSignal
 {
+    /**
+     * @var string
+     */
     protected $appId;
+    /**
+     * @var string
+     */
     protected $restApiKey;
-    protected $userAuthKey;
+    /**
+     * @var Client
+     */
     protected $client;
+    /**
+     * @var array
+     */
     protected $headers;
+
+    /**
+     * @var array
+     */
     protected $additionalParams;
 
+    /**
+     * Endpoints
+     */
     const API_URL = "https://onesignal.com/api/v1";
     const ENDPOINT_NOTIFICATIONS = "/notifications";
     const ENDPOINT_PLAYERS = "/players";
-    const ENDPOINT_APPS = "/apps";
+
+    /**
+     * Platforms
+     */
+    const IOS = 'iOS';
+    const ANDROID = 'Android';
+    const WEB = 'Web';
 
     /**
      * @var bool
@@ -51,11 +78,16 @@ class OneSignal
      */
     private $requestCallback;
 
-    public function __construct($appId, $restApiKey, $userAuthKey)
+    /**
+     * OneSignal constructor.
+     *
+     * @param string $appId
+     * @param string $restApiKey
+     */
+    public function __construct($appId, $restApiKey)
     {
         $this->appId = $appId;
         $this->restApiKey = $restApiKey;
-        $this->userAuthKey = $userAuthKey;
         $this->client = new Client([
             'handler' => $this->createGuzzleHandler(),
         ]);
@@ -66,19 +98,24 @@ class OneSignal
     /**
      * setPlatform
      *
+     * By default, OneSignal will send to every platform (each of these is true).
+     * To only send to specific platforms, you may pass in true on one or more of these parameters corresponding to the platform you wish to send to. If you do so, all other platforms will be set to false and will not be delivered to.
+     * These parameters will be ignored if sending to devices directly with include_player_ids or include_external_user_ids
+     *
      * @param string $platform iOS | Android | Web
+     * @param bool $enabled
      */
-    public function setPlatform($platform)
+    public function setPlatform($platform, $enabled = true)
     {
-        switch (strtoupper($platform)) {
-            case 'IOS':
-                $this->additionalParams['isIos'] = true;
+        switch ($platform) {
+            case self::IOS:
+                $this->additionalParams['isIos'] = $enabled;
                 break;
-            case 'ANDROID':
-                $this->additionalParams['isAndroid'] = true;
+            case self::ANDROID:
+                $this->additionalParams['isAndroid'] = $enabled;
                 break;
-            case 'WEB':
-                $this->additionalParams['isAnyWeb'] = true;
+            case self::WEB:
+                $this->additionalParams['isAnyWeb'] = $enabled;
                 break;
         }
     }
@@ -281,10 +318,16 @@ class OneSignal
 
     /**
      * setSegments
-     * @param string $segment
+     * @param string $segment "All" "Active Users", "Inactive Users"
      */
-    public function setSegments($segment = 'All') {
+    public function setSegments($segment = 'All')
+    {
         $this->additionalParams['included_segments'][] = $segment;
+    }
+
+    public function excludeSegments($segment)
+    {
+        $this->additionalParams['excluded_segments'][] = $segment;
     }
 
     /**
@@ -315,11 +358,6 @@ class OneSignal
         $this->headers['headers']['Authorization'] = 'Basic ' . $this->restApiKey;
     }
 
-    private function requiresUserAuth()
-    {
-        $this->headers['headers']['Authorization'] = 'Basic ' . $this->userAuthKey;
-    }
-
     private function usesJSON()
     {
         $this->headers['headers']['Content-Type'] = 'application/json';
@@ -328,27 +366,171 @@ class OneSignal
     /**
      * Send a notification with custom parameters defined in
      * https://documentation.onesignal.com/reference#section-example-code-create-notification
-     * @param array $parameters
      * @return mixed
      */
-    public function sendNotification($parameters = []){
+    public function sendNotification()
+    {
         $this->requiresAuth();
         $this->usesJSON();
-        if (isset($parameters['api_key'])) {
-            $this->headers['headers']['Authorization'] = 'Basic '.$parameters['api_key'];
-        }
+
         // Make sure to use app_id
-        if (!isset($parameters['app_id'])) {
-            $parameters['app_id'] = $this->appId;
-        }
+        $this->additionalParams['app_id'] = $this->appId;
+
         // Make sure to use included_segments
-        if (empty($parameters['included_segments']) && empty($parameters['include_player_ids'])) {
-            $parameters['included_segments'] = ['all'];
+        if (empty($this->additionalParams['included_segments']) && empty($this->additionalParams['include_player_ids'])) {
+            $this->additionalParams['included_segments'] = ['All'];
         }
-        $parameters = array_merge($parameters, $this->additionalParams);
-        $this->headers['body'] = json_encode($parameters);
-        $this->headers['buttons'] = json_encode($parameters);
+
+        $this->headers['body'] = json_encode($this->additionalParams);
+        $this->headers['buttons'] = json_encode($this->additionalParams);
         $this->headers['verify'] = false;
+
         return $this->post(self::ENDPOINT_NOTIFICATIONS);
+    }
+
+    /**
+     * getNotification
+     *
+     * @param $notificationId
+     * @return mixed
+     */
+    public function getNotification($notificationId)
+    {
+        $this->requiresAuth();
+        $this->usesJSON();
+        $response = $this->get(self::ENDPOINT_NOTIFICATIONS . '/' . $notificationId . '?app_id=' . $this->appId);
+        return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * getNotifications
+     *
+     * @param int $limit limit the notifications for page
+     * @param int $offset number of the page
+     * @param int $kind 0 for Dashboard, 1 for API, 3 for Automated default not set
+     * @return mixed
+     */
+    public function getNotifications($limit = 50, $offset = 0, $kind = -1)
+    {
+        $this->requiresAuth();
+        $this->usesJSON();
+        $endpoint = self::ENDPOINT_NOTIFICATIONS;
+        $endpoint .= '?app_id=' . $this->appId;
+        if (!is_null($limit)) {
+            $endpoint .= "&limit=" . $limit;
+        }
+        if (!is_null($offset)) {
+            $endpoint .= "&offset=" . $offset;
+        }
+
+        if ($kind > -1) {
+            $endpoint .= "&kind=" . $kind;
+        }
+
+        $response = $this->get($endpoint);
+        return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * deleteNotification
+     *
+     * @param $notificationId
+     * @return bool
+     */
+    public function deleteNotification($notificationId)
+    {
+        $this->requiresAuth();
+        $notificationCancelNode = "/$notificationId?app_id=$this->appId";
+
+        try {
+            $response = $this->delete(self::ENDPOINT_NOTIFICATIONS . $notificationCancelNode);
+            if ($response->getStatusCode() === 200) {
+                return json_decode($response->getBody()->getContents())->success;
+            }
+        } catch (ClientException $e) {
+            echo $e->getCode() . ' - ' . $e->getMessage();
+        }
+
+        return false;
+    }
+
+    /**
+     * getPlayers
+     *
+     * @param int $limit
+     * @param int $offset
+     * @return mixed
+     */
+    public function getPlayers($limit = 300, $offset = 0) {
+        $this->requiresAuth();
+        $this->usesJSON();
+
+        $endpoint = self::ENDPOINT_PLAYERS;
+        $endpoint .= '?app_id=' . $this->appId;
+        if (!is_null($limit)) {
+            $endpoint .= "&limit=" . $limit;
+        }
+        if (!is_null($offset)) {
+            $endpoint .= "&offset=" . $offset;
+        }
+
+        $response = $this->get($endpoint);
+        return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * post
+     *
+     * @param string $endPoint
+     * @return PromiseInterface|ResponseInterface
+     */
+    public function post($endPoint)
+    {
+        if ($this->requestAsync === true) {
+            $promise = $this->client->postAsync(self::API_URL . $endPoint, $this->headers);
+            return (is_callable($this->requestCallback) ? $promise->then($this->requestCallback) : $promise);
+        }
+        return $this->client->post(self::API_URL . $endPoint, $this->headers);
+    }
+
+    /**
+     * put
+     *
+     * @param string $endPoint
+     * @return PromiseInterface|ResponseInterface
+     */
+    public function put($endPoint)
+    {
+        if ($this->requestAsync === true) {
+            $promise = $this->client->putAsync(self::API_URL . $endPoint, $this->headers);
+            return (is_callable($this->requestCallback) ? $promise->then($this->requestCallback) : $promise);
+        }
+        return $this->client->put(self::API_URL . $endPoint, $this->headers);
+    }
+
+    /**
+     * get
+     *
+     * @param string $endPoint
+     * @return ResponseInterface
+     */
+    public function get($endPoint)
+    {
+        return $this->client->get(self::API_URL . $endPoint, $this->headers);
+    }
+
+    /**
+     * delete
+     *
+     * @param string $endPoint
+     * @return PromiseInterface|ResponseInterface
+     */
+    public function delete($endPoint)
+    {
+        if ($this->requestAsync === true) {
+            $promise = $this->client->deleteAsync(self::API_URL . $endPoint, $this->headers);
+            return (is_callable($this->requestCallback) ? $promise->then($this->requestCallback) : $promise);
+        }
+        return $this->client->delete(self::API_URL . $endPoint, $this->headers);
     }
 }

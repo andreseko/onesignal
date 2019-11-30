@@ -1,0 +1,23 @@
+language: php
+sudo: false
+php: 7.3
+env:
+  global:
+  - ONESIGNAL_DEFAULT_TITLE="My App"
+  - ONESIGNAL_DEFAULT_SUBTITLE="The best app ever"
+  - ONESIGNAL_IOS_SOUND="driver_effect.caf"
+  - ONESIGNAL_IOS_BADGE_TYPE="Increase"
+  - ONESIGNAL_IOS_BADGE_COUNT=1
+  - ONESIGNAL_ANDROID_SOUND="driver_effect"
+  - secure: WyRRyMFC40R/YKMzEW+Pgx37JGGsv7/jbtMnZv5l8cMro/l2psKhwfryJfywzrWfJYG/Lep/3NsCLGVokzeZpDCD2mEv323uAxra+9FY+tN+zg6ihhB9FjwFNTgJS2ovIYb4ykiufRefssNB+OFyENRate19ApS4byPqSO/ES8xU/rGe0qRnkFx3RtnnNQAuac08jwX5jaCm+2Oq56cGQ/Q5Hj+mUcI0JVZdMwYOtKqQPbg7a1N1cpFAz3lGpJXZL3bP0wc5YoDiozgkjiVVLjUR4G2KYAyaiGSDQUnbGD6Pt9nqOFQ6kR5aYvET1+s7zV9eDahjkOeP7NUyuWYyhLp9Uoyy/kao1C1LBvdbzdhf7dA8uSmfTM/z6mv2ep9/cYuoM5iZffz3fkHYrApVPX0MjsrSTWTp8XyJgkcsH9SL34dr+VqnTrTBjZJNZd9fZyMpeQ9U/pDT9tbQc+cP5lE11YBBKIl0nvCz5A9yK+sUxRrlgbqaaZUusX/w/zkbEOh3lMUEm9mm7sVmkXHfWSq28qysrxe83Y8AHeQTqq8YJ+8duIWfOD9blTrxtWhz31TJ75bMwM4c37hbPUEMNtksxAmv450OAeesjcoxo8hG4RZly6b+T9v5GGh49vJTFo9Rph9Gt1xLDg3F7vHHZr7nJJjAl59ipW1UwjLvxFc=
+  - secure: ZWAlonkvyCdQmKXM5hsHoebaKeuyjawoDWBrlfB2GRoMLxXQaHmCPgUWODvHuEJHcRCAGQA7Uc6+WBJUZihBEZFXsXUlZsI7l9ZvASDrNCWBGXWgz7RFSp8SkoOns/CvNHqC9pB90BvRkWNnzSnn2oFa1OkXdycpx8kHK6mgpW8Oh4ilX2IbWKAOtzQ+bt7cOfiN54QlKok5KR/OruT3oeOonUljUWrqE3BjrfTZN59QorIbzmhjYasfFIBMU2pWZ6kAVQx4A6sGpJzkq4sm2OAjkW35lD1i1xmi17U4NajDd2VOSy27YhMa8cPO1Hh5kb5CS47cq/9Eb4fZFJf6FElq1ZZzWnESyL3een/3n56AOcVUtPWZ61rf3SwA+isNbJcbbg8ZABhJHA2c189XNnNYuCLyHRMIZCujPwiq23p29HtvQFiFKVqlJhe9QCcpTV32lxmKAhzLRXTH1eyKn+TW3HdueXkmO2U95zAeK8GLXG6f9f9SJ2dMaTc6BC+iHLH1fFIHrz/qxUcsny4gLJv0Z3ktkpCJWOGfXK33lmVCFlTn8A64LYADtwk8inJ/t28Bp5pF36u9YUNq+Snsk2sPOnneE/eVeulxvnWcBu6AA3up3sl58kIZqBXknRETkF/Pc5HjX0IGXYt63KG9MPGG0NQKT403VCew3Xc3sZA=
+
+before_install:
+- composer global config minimum-stability dev
+- composer global config prefer-stable true
+
+install:
+- composer install
+
+script:
+- vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox tests/

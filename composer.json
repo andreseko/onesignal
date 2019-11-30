@@ -10,8 +10,8 @@
     "symfony/psr-http-message-bridge": "1.*"
   },
   "require-dev": {
-    "vlucas/phpdotenv": "^2.2",
-    "phpunit/phpunit": "^7.5"
+    "vlucas/phpdotenv": "^3.6.0",
+    "phpunit/phpunit": "^8"
   },
   "autoload": {
     "psr-4": {
