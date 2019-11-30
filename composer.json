@@ -1,0 +1,50 @@
+{
+  "name": "andreseko/onesignal",
+  "description": "OneSignal Push Wrapper Laravel",
+  "keywords": ["onesignal", "webpush", "push", "laravel", "laravel 5"],
+  "type": "library",
+  "require": {
+    "php": ">=5.4.0",
+    "guzzlehttp/guzzle": "^6.2",
+    "illuminate/support": "4.*|5.*|6.*",
+    "symfony/psr-http-message-bridge": "1.*"
+  },
+  "require-dev": {
+    "vlucas/phpdotenv": "^3.6.0",
+    "phpunit/phpunit": "^8"
+  },
+  "autoload": {
+    "psr-4": {
+      "AndreSeko\\OneSignal\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AndreSeko\\OneSignal\\OneSignalServiceProvider"
+      ],
+      "aliases": {
+        "OneSignal": "AndreSeko\\OneSignal\\OneSignalFacade"
+      }
+    }
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Andre Goncalves",
+      "email": "andreseko@gmail.com",
+      "role": "Senior Software Engineer"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": "dist"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  }
+}
