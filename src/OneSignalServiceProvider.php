@@ -5,7 +5,8 @@ namespace AndreSeko\OneSignal;
 
 
 use Illuminate\Support\ServiceProvider;
-use Laravel\Lumen\Application;
+use Laravel\Lumen\Application as LumenApplication;
+use Illuminate\Foundation\Application as LaravelApplication;
 
 /**
  * Class OneSignalServiceProvider
@@ -27,8 +28,10 @@ class OneSignalServiceProvider extends ServiceProvider
         $this->publishes([$configPath => config_path('onesignal.php')], 'config');
         $this->mergeConfigFrom($configPath, 'onesignal');
 
-        if ($this->app instanceof Application) {
+        if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
             $this->app->configure('onesignal');
+        } else if ($this->app instanceof LumenApplication) {
+            $this->app->configure('facebook');
         }
     }
 
@@ -39,7 +42,7 @@ class OneSignalServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('onesignal', function ($app) {
+        $this->app->singleton(OneSignal::class, function ($app) {
             $config = isset($app['config']['services']['onesignal']) ? $app['config']['services']['onesignal'] : null;
             if (is_null($config)) {
                 $config = $app['config']['onesignal'] ?: $app['config']['onesignal::config'];
@@ -48,7 +51,7 @@ class OneSignalServiceProvider extends ServiceProvider
             return new OneSignal($config['app_id'], $config['rest_api_key']);
         });
 
-        $this->app->alias('onesignal', 'AndreSeko\OneSignal\OneSignal');
+        $this->app->alias('onesignal', OneSignal::class);
     }
 
     /**
@@ -56,6 +59,6 @@ class OneSignalServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return ['onesignal'];
+        return [OneSignal::class];
     }
 }

@@ -1,5 +1,5 @@
 <?php
-return array(
+return [
     /*
 	|--------------------------------------------------------------------------
 	| One Signal App Id
@@ -57,4 +57,4 @@ return array(
         , 'headings_color' => env('ONESIGNAL_ANDROID_HEADINGS_COLOR', null)
         , 'contents_color' => env('ONESIGNAL_ANDROID_CONTENTS_COLOR', null)
     ],
-);
+];
