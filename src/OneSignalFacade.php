@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace AndreSeko\OneSignal;
 
@@ -16,7 +17,7 @@ class OneSignalFacade extends Facade
      * getFacadeAccessor
      * @return string
      */
-    protected static function getFacadeAccessor()
+    protected static function getFacadeAccessor(): string
     {
         return 'onesignal';
     }
