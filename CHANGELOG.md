@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0.2] - 2019-12-05
+### Fixed
+- Laravel minimum version
+
+## [1.0.2] - 2019-12-05
 ### Changed
 - Upgrade the requirements to php 7
 - Fixed the Laravel usage to 5.8
