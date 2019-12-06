@@ -25,14 +25,13 @@ class OneSignalServiceProvider extends ServiceProvider
     {
         $configPath = __DIR__ . '/../config/onesignal.php';
 
-        $this->publishes([$configPath => config_path('onesignal.php')], 'config');
-        $this->mergeConfigFrom($configPath, 'onesignal');
-
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
-            $this->app->configure('onesignal');
+            $this->publishes([$configPath => config_path('onesignal.php')], 'config');
         } else if ($this->app instanceof LumenApplication) {
             $this->app->configure('facebook');
         }
+
+        $this->mergeConfigFrom($configPath, 'onesignal');
     }
 
     /**
