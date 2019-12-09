@@ -21,11 +21,11 @@ use Psr\Http\Message\ResponseInterface;
  * Class OneSignal
  *
  * @author Andre Goncalves <andreseko@gmail.com>
- * @version 1.0.5
+ * @version 1.1.0
  * @package andreseko\OneSignal
  * @link https://documentation.onesignal.com/reference#create-notification to refer all customizable parameters.
  */
-class OneSignal
+class OneSignal implements OneSignalInterface
 {
     /**
      * @var string
@@ -166,41 +166,14 @@ class OneSignal
     }
 
     /**
-     * schedule
-     *
-     * Schedule notification for future delivery. API defaults to UTC -1100
-     * Ex: 2015-09-24 14:00:00 GMT-0700
-     *
-     * @param string $date
-     * @param string $time
-     * @param string $gmt
-     *
-     * @deprecated deprecated since version 1.0.5 use method scheduleFor instead
-     */
-    public function schedule($date = '', $time = '', $gmt = 'GMT-0500')
-    {
-        trigger_error('Use method scheduleFor instead.', E_USER_DEPRECATED);
-
-        if ($date === '') {
-            $date = date('Y-m-d');
-        }
-
-        if ($time === '') {
-            $date = date('H:i:s');
-        }
-
-        $this->additionalParams['send_after'] = $date . ' ' . $time . ' ' . $gmt;
-    }
-
-    /**
-     * scheduleFor
+     * scheduleTo
      *
      * Schedule notification for future delivery. API defaults to UTC -1100
      * ISO8601 Ex: 2015-09-24 14:00:00 GMT-0700 or 2019-02-01T03:45:27+0000
      *
      * @param Carbon|\Carbon\Carbon $date
      */
-    public function scheduleFor(Carbon $date)
+    public function scheduleTo(Carbon $date)
     {
         $this->additionalParams['send_after'] = $date->format(DateTime::ISO8601);
     }
@@ -369,42 +342,14 @@ class OneSignal
         $this->additionalParams['included_segments'][] = $segment;
     }
 
+    /**
+     * excludeSegments
+     *
+     * @param string $segment "Active Users", "Inactive Users"
+     */
     public function excludeSegments($segment)
     {
         $this->additionalParams['excluded_segments'][] = $segment;
-    }
-
-    /**
-     * createGuzzleHandler
-     *
-     * @return mixed
-     */
-    private function createGuzzleHandler()
-    {
-        return tap(HandlerStack::create(new CurlHandler()), function (HandlerStack $handlerStack) {
-            $handlerStack->push(Middleware::retry(function ($retries, Psr7Request $request, Psr7Response $response = null, RequestException $exception = null) {
-                if ($retries >= $this->maxRetries) {
-                    return false;
-                }
-                if ($exception instanceof ConnectException) {
-                    return true;
-                }
-                if ($response && $response->getStatusCode() >= 500) {
-                    return true;
-                }
-                return false;
-            }), $this->retryDelay);
-        });
-    }
-
-    private function requiresAuth()
-    {
-        $this->headers['headers']['Authorization'] = 'Basic ' . $this->restApiKey;
-    }
-
-    private function usesJSON()
-    {
-        $this->headers['headers']['Content-Type'] = 'application/json';
     }
 
     /**
@@ -521,6 +466,39 @@ class OneSignal
 
         $response = $this->get($endpoint);
         return json_decode($response->getBody()->getContents());
+    }
+
+    private function requiresAuth()
+    {
+        $this->headers['headers']['Authorization'] = 'Basic ' . $this->restApiKey;
+    }
+
+    private function usesJSON()
+    {
+        $this->headers['headers']['Content-Type'] = 'application/json';
+    }
+
+    /**
+     * createGuzzleHandler
+     *
+     * @return mixed
+     */
+    private function createGuzzleHandler()
+    {
+        return tap(HandlerStack::create(new CurlHandler()), function (HandlerStack $handlerStack) {
+            $handlerStack->push(Middleware::retry(function ($retries, Psr7Request $request, Psr7Response $response = null, RequestException $exception = null) {
+                if ($retries >= $this->maxRetries) {
+                    return false;
+                }
+                if ($exception instanceof ConnectException) {
+                    return true;
+                }
+                if ($response && $response->getStatusCode() >= 500) {
+                    return true;
+                }
+                return false;
+            }), $this->retryDelay);
+        });
     }
 
     /**

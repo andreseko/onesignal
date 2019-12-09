@@ -63,7 +63,8 @@ You need to fill in `onesignal.php` file that is found in your applications `con
 You can easily send a message to all registered users with the command:
 
 ```php
-OneSignal::setTitle('MY APP')
+$onesignal = new \AndreSeko\OneSignal\OneSignal('APP_ID', 'REST_API_KEY');
+$onesignal->setTitle('MY APP')
     ->setSubTitle('My best app ever')
     ->setMessage('My cool message')
     ->sendNotification();
@@ -74,7 +75,8 @@ OneSignal::setTitle('MY APP')
 Sending a message to iOS users:
 
 ```php
-OneSignal::setTitle('MY APP')
+$onesignal = new \AndreSeko\OneSignal\OneSignal('APP_ID', 'REST_API_KEY');
+$onesignal->setTitle('MY APP')
     ->setSubTitle('My best app ever')
     ->setMessage('My cool message')
     ->setPlataform(OneSignal::IOS)
@@ -89,7 +91,8 @@ OneSignal::setTitle('MY APP')
 Sending a message to Android users:
 
 ```php
-OneSignal::setTitle('MY APP')
+$onesignal = new \AndreSeko\OneSignal\OneSignal('APP_ID', 'REST_API_KEY');
+$onesignal->setTitle('MY APP')
     ->setSubTitle('My best app ever')
     ->setMessage('My cool message')
     ->setPlataform(OneSignal::ANDROID)
@@ -104,7 +107,8 @@ OneSignal::setTitle('MY APP')
 Getting all notifications from Onesignal
 
 ```php
-$response = OneSignal::getNotifications();
+$onesignal = new \AndreSeko\OneSignal\OneSignal('APP_ID', 'REST_API_KEY');
+$response = $onesignal->getNotifications();
 ```
 
 Please refer to https://documentation.onesignal.com/reference for all customizable parameters.
