@@ -198,7 +198,7 @@ class OneSignal
      * Schedule notification for future delivery. API defaults to UTC -1100
      * ISO8601 Ex: 2015-09-24 14:00:00 GMT-0700 or 2019-02-01T03:45:27+0000
      *
-     * @param Carbon $date
+     * @param Carbon|\Carbon\Carbon $date
      */
     public function scheduleFor(Carbon $date)
     {
