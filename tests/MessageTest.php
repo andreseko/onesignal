@@ -5,6 +5,7 @@ namespace AndreSeko\OneSignalTests;
 
 use AndreSeko\OneSignal\OneSignal;
 use Dotenv\Dotenv;
+use Illuminate\Support\Carbon;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -59,7 +60,9 @@ class MessageTest extends TestCase
         $oneSignal->setTitle(env('ONESIGNAL_DEFAULT_TITLE'));
         $oneSignal->setSubTitle(env('ONESIGNAL_DEFAULT_SUBTITLE'));
         $oneSignal->setMessage('Test from API');
-        $oneSignal->schedule(date('Y-m-d'), date('H:i:s', strtotime('+1 minutes')));
+        $date = new Carbon('now', 'America/New_York');
+        $date->addMinute(1);
+        $oneSignal->scheduleFor($date);
 
         $response = $oneSignal->sendNotification();
 
@@ -139,6 +142,22 @@ class MessageTest extends TestCase
         $id = $response->notifications[0]->id;
         $notification = $oneSignal->getNotification($id);
         $this->assertInstanceOf(stdClass::class, $notification);
+    }
+
+    public function testSendMessageUsingFilters()
+    {
+        $dotenv = Dotenv::create(__DIR__ . '/../');
+        $dotenv->load();
+
+        $oneSignal = new OneSignal(env('ONESIGNAL_APP_ID'), env('ONESIGNAL_REST_API_ID'));
+        $oneSignal->setTitle(env('ONESIGNAL_DEFAULT_TITLE'));
+        $oneSignal->setSubTitle(env('ONESIGNAL_DEFAULT_SUBTITLE'));
+        $oneSignal->setMessage('Test from API');
+        $oneSignal->setFilters('tag', 'exists', 'porto-alegre', 'city');
+        $response = $oneSignal->sendNotification();
+
+        $this->assertIsInt($response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
 //    public function testDeleteNotification()
