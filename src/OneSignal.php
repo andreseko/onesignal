@@ -3,6 +3,7 @@
 
 namespace AndreSeko\OneSignal;
 
+use DateTime;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
@@ -13,13 +14,14 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Psr7\Request as Psr7Request;
 use GuzzleHttp\Psr7\Response as Psr7Response;
+use Illuminate\Support\Carbon;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class OneSignal
  *
  * @author Andre Goncalves <andreseko@gmail.com>
- * @version 1.0.0
+ * @version 1.0.5
  * @package andreseko\OneSignal
  * @link https://documentation.onesignal.com/reference#create-notification to refer all customizable parameters.
  */
@@ -172,9 +174,13 @@ class OneSignal
      * @param string $date
      * @param string $time
      * @param string $gmt
+     *
+     * @deprecated deprecated since version 1.0.5 use method scheduleFor instead
      */
     public function schedule($date = '', $time = '', $gmt = 'GMT-0500')
     {
+        trigger_error('Use method scheduleFor instead.', E_USER_DEPRECATED);
+
         if ($date === '') {
             $date = date('Y-m-d');
         }
@@ -184,6 +190,19 @@ class OneSignal
         }
 
         $this->additionalParams['send_after'] = $date . ' ' . $time . ' ' . $gmt;
+    }
+
+    /**
+     * scheduleFor
+     *
+     * Schedule notification for future delivery. API defaults to UTC -1100
+     * ISO8601 Ex: 2015-09-24 14:00:00 GMT-0700 or 2019-02-01T03:45:27+0000
+     *
+     * @param Carbon $date
+     */
+    public function scheduleFor(Carbon $date)
+    {
+        $this->additionalParams['send_after'] = $date->format(DateTime::ISO8601);
     }
 
     /**
@@ -228,6 +247,31 @@ class OneSignal
     public function addButtons($id = '', $text = '', $icon = '')
     {
         $this->additionalParams['buttons'][] = ['id' => $id, 'text' => $text, 'icon' => $icon];
+    }
+
+    /**
+     * setFilters
+     *
+     * @link https://documentation.onesignal.com/reference#section-send-to-users-based-on-filters
+     *
+     * @param string $field
+     * @param string $relation relation = ">", "<", "=", "!=", "exists", "not_exists"
+     * @param mixed $value
+     * @param string|null $key
+     * @param string|null $operator
+     */
+    public function setFilters(string $field, string $relation, $value, string $key = null, string $operator = null) {
+        $parameter = ['field' => $field, 'relation' => $relation, 'value' => $value];
+
+        if (!is_null($key)) {
+            $parameter['key'] = $key;
+        }
+
+        if (!is_null($operator)) {
+            $parameter['operator'] = $operator;
+        }
+
+        $this->additionalParams['filters'][] = $parameter;
     }
 
     /**
@@ -461,7 +505,8 @@ class OneSignal
      * @param int $offset
      * @return mixed
      */
-    public function getPlayers($limit = 300, $offset = 0) {
+    public function getPlayers($limit = 300, $offset = 0)
+    {
         $this->requiresAuth();
         $this->usesJSON();
 
