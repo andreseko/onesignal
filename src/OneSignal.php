@@ -233,7 +233,8 @@ class OneSignal implements OneSignalInterface
      * @param string|null $key
      * @param string|null $operator
      */
-    public function setFilters(string $field, string $relation, $value, string $key = null, string $operator = null) {
+    public function setFilters(string $field, string $relation, $value, string $key = null, string $operator = null)
+    {
         $parameter = ['field' => $field, 'relation' => $relation, 'value' => $value];
 
         if (!is_null($key)) {
@@ -244,6 +245,21 @@ class OneSignal implements OneSignalInterface
             $parameter['operator'] = $operator;
         }
 
+        $this->additionalParams['filters'][] = $parameter;
+    }
+
+    /**
+     * setLocation
+     *
+     * @link https://documentation.onesignal.com/reference#section-send-to-users-based-on-filters
+     *
+     * @param float $latitude
+     * @param float $longitude
+     * @param int $radius in meters default is 50000 meters
+     */
+    public function setLocation(float $latitude, float $longitude, int $radius = 50000)
+    {
+        $parameter = ['field' => 'location', 'radius' => $radius, 'lat' => $latitude, 'long' => $longitude];
         $this->additionalParams['filters'][] = $parameter;
     }
 
