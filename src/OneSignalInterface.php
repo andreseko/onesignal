@@ -105,6 +105,18 @@ interface OneSignalInterface
     public function setFilters(string $field, string $relation, $value, string $key = null, string $operator = null);
 
     /**
+     * setLocation
+     *
+     * @link https://documentation.onesignal.com/reference#section-send-to-users-based-on-filters
+     *
+     * @param float $latitude
+     * @param float $longitude
+     * @param int $radius in meters default is 50000 meters
+     * @return void
+     */
+    public function setLocation(float $latitude, float $longitude, int $radius = 50);
+
+    /**
      * configureIos
      *
      * @param string $sound
