@@ -1,6 +1,6 @@
 language: php
 sudo: false
-php: 7.3
+php: 8.0
 env:
   global:
   - ONESIGNAL_DEFAULT_TITLE="My App"
