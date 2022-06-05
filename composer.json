@@ -7,7 +7,7 @@
     "php": ">=7.4",
     "guzzlehttp/guzzle": "^6.3",
     "illuminate/support": "5.*|6.*|7.*|8.*|9.*",
-    "symfony/psr-http-message-bridge": "1.*"
+    "symfony/psr-http-message-bridge": "2.*"
   },
   "require-dev": {
     "vlucas/phpdotenv": "^3.6.0",
