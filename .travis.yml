@@ -1,6 +1,6 @@
 language: php
 sudo: false
-php: 8.0
+php: 8.1
 env:
   global:
   - ONESIGNAL_DEFAULT_TITLE="My App"
@@ -13,7 +13,7 @@ env:
   - secure: ZWAlonkvyCdQmKXM5hsHoebaKeuyjawoDWBrlfB2GRoMLxXQaHmCPgUWODvHuEJHcRCAGQA7Uc6+WBJUZihBEZFXsXUlZsI7l9ZvASDrNCWBGXWgz7RFSp8SkoOns/CvNHqC9pB90BvRkWNnzSnn2oFa1OkXdycpx8kHK6mgpW8Oh4ilX2IbWKAOtzQ+bt7cOfiN54QlKok5KR/OruT3oeOonUljUWrqE3BjrfTZN59QorIbzmhjYasfFIBMU2pWZ6kAVQx4A6sGpJzkq4sm2OAjkW35lD1i1xmi17U4NajDd2VOSy27YhMa8cPO1Hh5kb5CS47cq/9Eb4fZFJf6FElq1ZZzWnESyL3een/3n56AOcVUtPWZ61rf3SwA+isNbJcbbg8ZABhJHA2c189XNnNYuCLyHRMIZCujPwiq23p29HtvQFiFKVqlJhe9QCcpTV32lxmKAhzLRXTH1eyKn+TW3HdueXkmO2U95zAeK8GLXG6f9f9SJ2dMaTc6BC+iHLH1fFIHrz/qxUcsny4gLJv0Z3ktkpCJWOGfXK33lmVCFlTn8A64LYADtwk8inJ/t28Bp5pF36u9YUNq+Snsk2sPOnneE/eVeulxvnWcBu6AA3up3sl58kIZqBXknRETkF/Pc5HjX0IGXYt63KG9MPGG0NQKT403VCew3Xc3sZA=
 
 before_install:
-- composer global config minimum-stability dev
+- composer global config minimum-stability stable
 - composer global config prefer-stable true
 
 install:
